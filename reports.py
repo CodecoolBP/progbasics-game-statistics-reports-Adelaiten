@@ -1,8 +1,19 @@
-def count_games(file_name):
-    #counting number of games in file_name
+def open_function(file_name):
     with open(file_name) as gamesFile:
         lines = gamesFile.readlines()
+    return lines
 
+
+def splitting_lines(lines):
+    splitted_collection = []
+    for collection in lines:
+        splitted_collection.append(collection.split('\t'))
+    return splitted_collection
+
+
+def count_games(file_name):
+    #counting number of games in file_name
+    lines = open_function(file_name)
     number_of_games = 0
 
     for collection in lines:
@@ -13,20 +24,17 @@ def count_games(file_name):
 
 def decide(file_name, year):
     #check if year in file_name
-    with open(file_name) as gamesFile:
-        lines = gamesFile.readlines()
-
+    lines = open_function(file_name)
     equal = 0
-
+   
     for collection in lines:
         splitted_collection = collection.split('\t')
         for item in splitted_collection:
             try:
-                if int(item) > 1900:
-                    if int(item) == year:
+                if int(item) > 1900 and int(item) == year:
                         equal += 1
             except:
-                pass
+                print("There is no game made in " + str(year))
 
     if equal > 0:
         return True
@@ -36,10 +44,12 @@ def decide(file_name, year):
 
 def get_latest(file_name):
     #get latest developed game
-    with open(file_name) as gamesFile:
-        lines = gamesFile.readlines()
-
+    lines = open_function(file_name)
     game_title_year = []
+    FILE_NAME_INDEX = 0
+    FILE_YEAR_INDEX = 2
+    LIST_YEAR_INDEX = 1
+    LIST_NAME_INDEX = 0
 
     for collection in lines:
         splitted_collection = collection.split('\t')
@@ -47,27 +57,24 @@ def get_latest(file_name):
             try:
                 if int(item) > 1900:
                     if not game_title_year:
-                        game_title_year.append(splitted_collection[0])
-                        game_title_year.append(splitted_collection[2])
-                    elif int(splitted_collection[2]) > int(game_title_year[1]):
+                        game_title_year.append(splitted_collection[FILE_NAME_INDEX])
+                        game_title_year.append(splitted_collection[FILE_YEAR_INDEX])
+                    elif int(splitted_collection[FILE_YEAR_INDEX]) > int(game_title_year[LIST_YEAR_INDEX]):
                         game_title_year = []
-                        game_title_year.append(splitted_collection[0])
-                        game_title_year.append(splitted_collection[2])
-                    elif int(splitted_collection[2]) == int(game_title_year[1]):
-                        continue
-            except:
+                        game_title_year.append(splitted_collection[FILE_NAME_INDEX])
+                        game_title_year.append(splitted_collection[FILE_YEAR_INDEX])
+
+            except:     # ???
                 pass
 
-    game = game_title_year[0]
+    game = game_title_year[FILE_NAME_INDEX]
 
     return game
 
 
 def count_by_genre(file_name, genre):
     #count games by genre
-    with open(file_name) as gamesFile:
-        lines = gamesFile.readlines()
-
+    lines = open_function(file_name)
     games_genre = 0
 
     for collection in lines:
@@ -75,19 +82,16 @@ def count_by_genre(file_name, genre):
         for item in splitted_collection:
             if item.lower() == genre.lower():
                 games_genre += 1
-            else:
-                continue
 
     return games_genre
 
 def get_line_number_by_title(file_name, title):
     #looking for game title's line in file_name
-    with open(file_name) as gamesFile:
-        lines = gamesFile.readlines()
-
+    lines = open_function(file_name)
     loop_line = 0
     splitted_collection = []
     title_and_number = []
+    LINE_INDEX = 1
     for collection in lines:
         splitted_collection.append(collection.split('\t'))
 
@@ -98,11 +102,11 @@ def get_line_number_by_title(file_name, title):
             if item.lower() == title.lower():
                 title_and_number.append(title)
                 title_and_number.append(loop_line)
+    if title_and_number:
+        return title_and_number[LINE_INDEX]
+    else:
+        print("There is no such game as " + title)
 
-    try:
-        return title_and_number[1]
-    except IndexError:
-        pass
 
 
 
